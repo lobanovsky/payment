@@ -10,13 +10,15 @@ class PaymentParser {
 
     private val SHEET_NAME = "40703810838000014811"
     private val SKIP_ROW = 11
+    private val ID = 14
     private val DATE = 1
     private val PAYER = 4
     private val SUM = 13
     private val PURPOSE = 20
 
-    fun parse(fileName: String): List<Payment> {
-        val payments = mutableListOf<Payment>()
+    fun parse(i: Int, fileName: String): MutableMap<String, Payment> {
+        println("$i. Parse [$fileName]")
+        val payments = mutableMapOf<String, Payment>()
 
         val myFile = File(fileName)
         val fis = FileInputStream(myFile)
@@ -34,10 +36,11 @@ class PaymentParser {
 //            println(v)
             val payer = row.getCell(PAYER).stringCellValue.trim()
             if (payer.isBlank()) continue
+            val id = row.getCell(ID).stringCellValue.trim()
             val date = row.getCell(DATE).localDateTimeCellValue
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
-            payments.add(Payment(date, payer, sum, purpose))
+            payments[id] = Payment(id, date, payer, sum, purpose)
         }
         return payments
     }
