@@ -99,6 +99,7 @@ class PaymentApplication : CommandLineRunner {
         return items.joinToString(";")
     }
 
+    //не менять очередность строк в данном методе
     private fun findAccountOrNull(accounts: List<Account>, payment: Payment): Pair<Account?, SearchTypeEnum?> {
         var account = findByFullAccount(accounts, payment.purpose)
         if (account != null) return Pair(account, SearchTypeEnum.FULL_ACCOUNT)
@@ -161,6 +162,12 @@ class PaymentApplication : CommandLineRunner {
         }
         if (payment?.payer?.contains("ДЫБОВ ДЕНИС АЛЕКСАНДРОВИЧ") == true) {
             return accounts.find { it.number.contains("1093") }
+        }
+        if (payment?.payer?.contains("ПОЛОВОДОВ ВИКТОР ПАВЛОВИЧ") == true) {
+            return accounts.find { it.number.contains("1041") }
+        }
+        if (payment?.payer?.contains("МУХТАРОВ АРИФ ТОФИКОВИЧ") == true) {
+            return accounts.find { it.number.contains("1036") }
         }
         return null
     }
