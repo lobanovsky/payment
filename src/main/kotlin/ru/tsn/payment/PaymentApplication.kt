@@ -27,7 +27,8 @@ class PaymentApplication : CommandLineRunner {
     private val FILES = listOf(
         "СберБизнес. Выписка за 2021.06.04-2021.06.17 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.06.18-2021.06.26 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2021.06.25-2021.07.08 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2021.06.25-2021.07.08 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2021.07.07-2021.07.09 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -168,6 +169,18 @@ class PaymentApplication : CommandLineRunner {
         }
         if (payment?.payer?.contains("МУХТАРОВ АРИФ ТОФИКОВИЧ") == true) {
             return accounts.find { it.number.contains("1036") }
+        }
+        if (payment?.payer?.contains("ЛАБЫШКИНА ЕКАТЕРИНА ВЯЧЕСЛАВОВНА") == true) {
+            return accounts.find { it.number.contains("1061") }
+        }
+        if (payment?.payer?.contains("ИСАХАНЯН АРАМ ИГНАТОВИЧ") == true) {
+            return accounts.find { it.number.contains("3102") }
+        }
+        if (payment?.payer?.contains("ГОГОХИЯ ДАВИД ГОГИЕВИЧ") == true) {
+            return accounts.find { it.number.contains("1025") }
+        }
+        if (payment?.payer?.contains("ВИНОГРАДОВА ОЛЬГА ДМИТРИЕВНА") == true) {
+            return accounts.find { it.number.contains("1109") }
         }
         return null
     }
