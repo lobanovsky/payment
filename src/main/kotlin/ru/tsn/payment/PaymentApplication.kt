@@ -33,7 +33,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2021.07.13-2021.07.15 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.07.15-2021.07.22 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.07.22-2021.07.26 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2021.07.26-2021.08.02 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2021.07.26-2021.08.02 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2021.08.02-2021.08.19 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -160,32 +161,38 @@ class PaymentApplication : CommandLineRunner {
     fun squareLess20(sum: BigDecimal?): Boolean = sum?.compareTo(BigDecimal(20)) == -1
 
     fun findByHardCodeOrNull(accounts: List<Account>, payment: Payment?): Account? {
-        if (payment?.payer?.contains("ВИЖИЦКИЙ ВАЛЕРИЙ АЛЕКСЕЕВИЧ") == true) {
+        if (payment?.payer?.contains("ВИЖИЦКИЙ ВАЛЕРИЙ АЛЕКСЕЕВИЧ", true) == true) {
             return accounts.find { it.number.contains("1007") }
         }
-        if (payment?.payer?.contains("ПЕСКОВА КСЕНИЯ СЕРГЕЕВНА") == true) {
+        if (payment?.payer?.contains("ПЕСКОВА КСЕНИЯ СЕРГЕЕВНА", true) == true) {
             return accounts.find { it.number.contains("1014") }
         }
-        if (payment?.payer?.contains("ДЫБОВ ДЕНИС АЛЕКСАНДРОВИЧ") == true) {
+        if (payment?.payer?.contains("ДЫБОВ ДЕНИС АЛЕКСАНДРОВИЧ", true) == true) {
             return accounts.find { it.number.contains("1093") }
         }
-        if (payment?.payer?.contains("ПОЛОВОДОВ ВИКТОР ПАВЛОВИЧ") == true) {
+        if (payment?.payer?.contains("ПОЛОВОДОВ ВИКТОР ПАВЛОВИЧ", true) == true) {
             return accounts.find { it.number.contains("1041") }
         }
-        if (payment?.payer?.contains("МУХТАРОВ АРИФ ТОФИКОВИЧ") == true) {
+        if (payment?.payer?.contains("МУХТАРОВ АРИФ ТОФИКОВИЧ", true) == true) {
             return accounts.find { it.number.contains("1036") }
         }
-        if (payment?.payer?.contains("ЛАБЫШКИНА ЕКАТЕРИНА ВЯЧЕСЛАВОВНА") == true) {
+        if (payment?.payer?.contains("ЛАБЫШКИНА ЕКАТЕРИНА ВЯЧЕСЛАВОВНА", true) == true) {
             return accounts.find { it.number.contains("1061") }
         }
-        if (payment?.payer?.contains("ИСАХАНЯН АРАМ ИГНАТОВИЧ") == true) {
+        if (payment?.payer?.contains("ИСАХАНЯН АРАМ ИГНАТОВИЧ", true) == true) {
             return accounts.find { it.number.contains("3102") }
         }
-        if (payment?.payer?.contains("ГОГОХИЯ ДАВИД ГОГИЕВИЧ") == true) {
+        if (payment?.payer?.contains("ГОГОХИЯ ДАВИД ГОГИЕВИЧ", true) == true) {
             return accounts.find { it.number.contains("1025") }
         }
-        if (payment?.payer?.contains("ВИНОГРАДОВА ОЛЬГА ДМИТРИЕВНА") == true) {
+        if (payment?.payer?.contains("ВИНОГРАДОВА ОЛЬГА ДМИТРИЕВНА", true) == true) {
             return accounts.find { it.number.contains("1109") }
+        }
+        if (payment?.payer?.contains("ПОЛОВОДОВ ВИКТОР ПАВЛОВИЧ", true) == true) {
+            return accounts.find { it.number.contains("1041") }
+        }
+        if (payment?.payer?.contains("КИШМИШЯН АРМАН АРСЕНОВИЧ", true) == true) {
+            return accounts.find { it.number.contains("2003") }
         }
         return null
     }
