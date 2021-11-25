@@ -41,7 +41,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2021.09.29-2021.10.07 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.10.07-2021.10.17 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.10.17-2021.10.26 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2021.10.26-2021.11.08 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2021.10.26-2021.11.08 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2021.11.08-2021.11.25 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -200,6 +201,12 @@ class PaymentApplication : CommandLineRunner {
         }
         if (payment?.payer?.contains("КИШМИШЯН АРМАН АРСЕНОВИЧ", true) == true) {
             return accounts.find { it.number.contains("2003") }
+        }
+        if (payment?.payer?.contains("БОЛЫШЕВА КСЕНИЯ МАКСИМОВНА", true) == true) {
+            return accounts.find { it.number.contains("1109") }
+        }
+        if (payment?.payer?.contains("КАРАХАН АКАЙ", true) == true) {
+            return accounts.find { it.number.contains("1088") }
         }
         return null
     }
