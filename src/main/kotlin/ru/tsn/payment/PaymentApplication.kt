@@ -24,7 +24,7 @@ class PaymentApplication : CommandLineRunner {
 //    private val FILE_NAME = "СберБизнес. Выписка за 2021.06.04-2021.06.17 счёт 40703810838000014811.xlsx"
 //    private val FILE_NAME = "СберБизнес. Выписка за 2021.06.18-2021.06.26 счёт 40703810838000014811.xlsx"
 
-    private val FILES = listOf(
+    private val PAYMENTS = listOf(
         "СберБизнес. Выписка за 2021.06.04-2021.06.17 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.06.18-2021.06.26 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.06.25-2021.07.08 счёт 40703810838000014811.xlsx",
@@ -40,7 +40,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2021.09.07-2021.09.29 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.09.29-2021.10.07 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.10.07-2021.10.17 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2021.10.17-2021.10.26 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2021.10.17-2021.10.26 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2021.10.26-2021.11.08 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -48,7 +49,7 @@ class PaymentApplication : CommandLineRunner {
         val ids = mutableSetOf<String>()
         val accounts = AccountParser().parse("etc/ЛС УО1.xlsx")
         var i = 1
-        for (file in FILES) {
+        for (file in PAYMENTS) {
             val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString())
 
             val duplicates = findDuplicates(payments.keys, ids)
