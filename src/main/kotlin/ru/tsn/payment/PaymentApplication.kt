@@ -51,7 +51,9 @@ class PaymentApplication : CommandLineRunner {
         val accounts = AccountParser().parse("etc/ЛС УО1.xlsx")
         var i = 1
         for (file in PAYMENTS) {
-            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString())
+            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER)
+                .resolve(file)
+                .toString())
 
             val duplicates = findDuplicates(payments.keys, ids)
             println("Duplicates [${duplicates.size}] $duplicates")
@@ -65,10 +67,10 @@ class PaymentApplication : CommandLineRunner {
             ids.clear()
             ids.addAll(payments.keys)
 
-            val lines = determine(payments.toMap(), accounts)
+            val lines = determine(payments.values, accounts)
 
-
-            println(lines)
+//            println(lines)
+            println()
             Path(Paths.get(DEFAULT_FOLDER).resolve(fileName(file)).toString()).writeLines(lines);
             i++
         }
@@ -86,11 +88,9 @@ class PaymentApplication : CommandLineRunner {
     }
 
 
-    fun determine(payments: Map<String, Payment>, accounts: List<Account>): List<String> {
-        val paymentsWithOutNoise = payments.values
-            .filterNot { it.purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ") || it.payer.contains("ГЦЖС") }
+    fun determine(payments: Collection<Payment>, accounts: List<Account>): List<String> {
         val lines = mutableListOf<String>()
-        for (payment in paymentsWithOutNoise) {
+        for (payment in payments) {
             val (account, searchType) = findAccountOrNull(accounts, payment)
 //            println(payment)
 //            println(account)

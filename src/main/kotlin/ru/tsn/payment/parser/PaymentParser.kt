@@ -35,12 +35,22 @@ class PaymentParser {
 //            val v = row.getCell(SUM).toString()
 //            println(v)
             val payer = row.getCell(PAYER).stringCellValue.trim()
+            if (payer.contains("ГЦЖС")) {
+                continue
+            }
+
             if (payer.isBlank()) continue
-            val id = row.getCell(ID).stringCellValue.trim()
+            val docNumber = row.getCell(ID).stringCellValue.trim()
             val date = row.getCell(DATE).localDateTimeCellValue
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
-            payments[id] = Payment(id, date, payer, sum, purpose)
+            if (purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ")) {
+                continue
+            }
+
+            val uuid = "$date $docNumber $sum";
+
+            payments[uuid] = Payment(uuid, date, payer, sum, docNumber, purpose)
         }
         return payments
     }
