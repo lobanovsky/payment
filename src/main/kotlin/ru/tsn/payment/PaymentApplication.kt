@@ -42,7 +42,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2021.10.07-2021.10.17 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.10.17-2021.10.26 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2021.10.26-2021.11.08 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2021.11.08-2021.11.25 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2021.11.08-2021.11.25 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2021.11.25-2021.12.15 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -51,9 +52,7 @@ class PaymentApplication : CommandLineRunner {
         val accounts = AccountParser().parse("etc/ЛС УО1.xlsx")
         var i = 1
         for (file in PAYMENTS) {
-            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER)
-                .resolve(file)
-                .toString())
+            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString())
 
             val duplicates = findDuplicates(payments.keys, ids)
             println("Duplicates [${duplicates.size}] $duplicates")
@@ -84,7 +83,7 @@ class PaymentApplication : CommandLineRunner {
         val baseName = FilenameUtils.getBaseName(prefix)
         val formatterFileName = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dateFormat = LocalDateTime.now().format(formatterFileName)
-        return "$baseName [$dateFormat].csv"
+        return "$baseName [2021-12-05].csv"
     }
 
 
