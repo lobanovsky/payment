@@ -202,9 +202,9 @@ class PaymentApplication : CommandLineRunner {
         if (payment?.payer?.contains("КИШМИШЯН АРМАН АРСЕНОВИЧ", true) == true) {
             return accounts.find { it.number.contains("2003") }
         }
-        if (payment?.payer?.contains("БОЛЫШЕВА КСЕНИЯ МАКСИМОВНА", true) == true) {
-            return accounts.find { it.number.contains("1109") }
-        }
+//        if (payment?.payer?.contains("БОЛЫШЕВА КСЕНИЯ МАКСИМОВНА", true) == true) {
+//            return accounts.find { it.number.contains("1109") }
+//        }
         if (payment?.payer?.contains("КАРАХАН АКАЙ", true) == true) {
             return accounts.find { it.number.contains("1088") }
         }
