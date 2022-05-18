@@ -52,7 +52,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2022.02.27-2022.03.16 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2022.03.16-2022.03.30 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2022.03.30-2022.04.20 счёт 40703810838000014811.xlsx",
-        "СберБизнес. Выписка за 2022.04.20-2022.05.01 счёт 40703810838000014811.xlsx"
+        "СберБизнес. Выписка за 2022.04.20-2022.05.01 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2022.05.01-2022.05.18 счёт 40703810838000014811.xlsx"
     )
 
 
@@ -218,6 +219,9 @@ class PaymentApplication : CommandLineRunner {
 //        }
         if (payment?.payer?.contains("КАРАХАН АКАЙ", true) == true) {
             return accounts.find { it.number.contains("1088") }
+        }
+        if (payment?.payer?.contains("РОМАНОВСКИЙ ГЕННАДИЙ ГЕОРГИЕВИЧ", true) == true) {
+            return accounts.find { it.number.contains("3098") }
         }
         return null
     }
