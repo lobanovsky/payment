@@ -223,6 +223,12 @@ class PaymentApplication : CommandLineRunner {
         if (payment?.payer?.contains("РОМАНОВСКИЙ ГЕННАДИЙ ГЕОРГИЕВИЧ", true) == true) {
             return accounts.find { it.number.contains("3098") }
         }
+        if (payment?.payer?.contains("СПЕКТОР МАРИНА РОМАНОВНА", true) == true) {
+            return accounts.find { it.number.contains("1014") }
+        }
+        if (payment?.payer?.contains("ДОНСКИХ ДЕНИС ГЕННАДЬЕВИЧ", true) == true) {
+            return accounts.find { it.number.contains("3020") }
+        }
         return null
     }
 
