@@ -156,7 +156,7 @@ class PaymentApplication : CommandLineRunner {
 
     fun findByShortAccount(accounts: List<Account>, purpose: String?): Account? {
         return accounts.firstOrNull {
-            purpose?.contains(it.number.trimStart('0'), ignoreCase = true) == true
+            purpose?.contains(" ${it.number.trimStart('0')}", ignoreCase = true) == true
         }
     }
 
