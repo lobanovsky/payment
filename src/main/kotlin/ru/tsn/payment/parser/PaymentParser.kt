@@ -8,7 +8,6 @@ import java.math.BigDecimal
 
 class PaymentParser {
 
-    private val SHEET_NAME = "40703810838000014811"
     private val SKIP_ROW = 11
     private val ID = 14
     private val DATE = 1
@@ -16,14 +15,14 @@ class PaymentParser {
     private val SUM = 13
     private val PURPOSE = 20
 
-    fun parse(i: Int, fileName: String): MutableMap<String, Payment> {
+    fun parse(i: Int, fileName: String, sheetName: String): MutableMap<String, Payment> {
         println("$i. Parse [$fileName]")
         val payments = mutableMapOf<String, Payment>()
 
         val myFile = File(fileName)
         val fis = FileInputStream(myFile)
         val workbook = XSSFWorkbook(fis)
-        val sheet = workbook.getSheet(SHEET_NAME)
+        val sheet = workbook.getSheet(sheetName)
 
         var skipCounter = 0
         for (row in sheet) {

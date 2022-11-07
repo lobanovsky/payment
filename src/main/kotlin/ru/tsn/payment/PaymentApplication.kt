@@ -63,6 +63,7 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2022.08.25-2022.09.08 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2022.09.08-2022.09.27 счёт 40703810838000014811.xlsx",
         "СберБизнес. Выписка за 2022.09.27-2022.10.06 счёт 40703810838000014811.xlsx",
+        "СберБизнес. Выписка за 2022.10.06-2022.11.07 счёт 40703810338000004376.xlsx",
     )
 
 
@@ -71,7 +72,8 @@ class PaymentApplication : CommandLineRunner {
         val accounts = AccountParser().parse("etc/ЛС УО1.xlsx")
         var i = 1
         for (file in PAYMENTS) {
-            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString())
+            val sheetName = file.substringAfterLast(" ").split(".")[0]
+            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString(), sheetName)
 
             val duplicates = findDuplicates(payments.keys, ids)
             println("Duplicates [${duplicates.size}] $duplicates")
