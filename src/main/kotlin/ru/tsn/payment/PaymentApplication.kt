@@ -68,6 +68,7 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2022.11.11-2022.11.27 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2022.11.27-2022.11.29 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2022.11.29-2022.12.04 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2022.12.04-2022.12.08 счёт 40703810338000004376.xlsx"
     )
 
 
@@ -246,6 +247,9 @@ class PaymentApplication : CommandLineRunner {
         }
         if (payment?.payer?.contains("Хайбулаев Заур Магомеддибирович", true) == true) {
             return accounts.find { it.number.contains("3097") }
+        }
+        if (payment?.payer?.contains("Хлебникова Светлана Александровна", true) == true) {
+            return accounts.find { it.number.contains("3123") }
         }
         return null
     }
