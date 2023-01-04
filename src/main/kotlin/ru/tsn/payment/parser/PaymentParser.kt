@@ -43,7 +43,10 @@ class PaymentParser {
             val date = row.getCell(DATE).localDateTimeCellValue
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
-            if (purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ")) {
+            if (purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ")
+                || purpose.contains("ПО ПЛАТЕЖАМ С")
+                || purpose.contains("Возврат депозита по договору")
+                || purpose.contains("Выплата %% по договору")) {
                 continue
             }
 
