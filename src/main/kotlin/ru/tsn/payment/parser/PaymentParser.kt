@@ -46,7 +46,9 @@ class PaymentParser {
             if (purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ")
                 || purpose.contains("ПО ПЛАТЕЖАМ С")
                 || purpose.contains("Возврат депозита по договору")
-                || purpose.contains("Выплата %% по договору")) {
+                || purpose.contains("Выплата %% по договору")
+                || purpose.contains("ПЕРЕВОД СРЕДСТВ ПО ПОРУЧЕНИЮ ФИЗ.ЛИЦ ЗА")
+                ) {
                 continue
             }
 
