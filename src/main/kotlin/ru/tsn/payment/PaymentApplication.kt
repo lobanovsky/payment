@@ -225,6 +225,9 @@ class PaymentApplication : CommandLineRunner {
         if (payment?.payer?.contains("Коровина Любовь Николаевна", true) == true) {
             return accounts.find { it.number.contains("1009") }
         }
+        if (payment?.payer?.contains("ТАТЬЯНА АНАТОЛЬЕВНА СОФРОНОВА", true) == true) {
+            return accounts.find { it.number.contains("1072") }
+        }
         return null
     }
 
