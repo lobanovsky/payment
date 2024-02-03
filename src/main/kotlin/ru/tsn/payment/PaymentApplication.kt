@@ -1,14 +1,18 @@
 package ru.tsn.payment
 
 import org.apache.commons.io.FilenameUtils
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import ru.tsn.payment.enums.RegistryVersionEnum
 import ru.tsn.payment.enums.SearchTypeEnum
 import ru.tsn.payment.model.Account
 import ru.tsn.payment.model.Payment
 import ru.tsn.payment.parser.AccountParser
 import ru.tsn.payment.parser.PaymentParser
+import java.io.File
+import java.io.FileInputStream
 import java.math.BigDecimal
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -60,7 +64,20 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2023.12.24-2024.01.02 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.01.02-2024.01.10 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.01.10-2024.01.22 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.01.22-2024.02.02 счёт 40703810338000004376.xlsx",
     )
+
+    private fun getVersion(fileName: String, sheetName: String): RegistryVersionEnum {
+        val myFile = File(fileName)
+        val fis = FileInputStream(myFile)
+        val workbook = XSSFWorkbook(fis)
+        val sheet = workbook.getSheet(sheetName)
+        val row = sheet.getRow(1)
+        val version = row.getCell(5).stringCellValue
+        if (version.startsWith("СберБизнес 41.")) return RegistryVersionEnum.V1
+        if (version.startsWith("СберБизнес. 03")) return RegistryVersionEnum.V2
+        return RegistryVersionEnum.UNKNOWN
+    }
 
     override fun run(vararg args: String?) {
         val ids = mutableSetOf<String>()
@@ -68,7 +85,9 @@ class PaymentApplication : CommandLineRunner {
         var i = 1
         for (file in PAYMENTS) {
             val sheetName = file.substringAfterLast(" ").split(".")[0]
-            val payments = PaymentParser().parse(i, Paths.get(DEFAULT_FOLDER).resolve(file).toString(), sheetName)
+            val fileName = Paths.get(DEFAULT_FOLDER).resolve(file).toString()
+            val version = getVersion(fileName, sheetName)
+            val payments = PaymentParser().parse(i, fileName, sheetName, version)
 
             val duplicates = findDuplicates(payments.keys, ids)
             println("Duplicates [${duplicates.size}] $duplicates")
