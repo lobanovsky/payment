@@ -7,7 +7,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class PaymentParser {
@@ -19,13 +18,23 @@ class PaymentParser {
     ): MutableMap<String, Payment> {
 
 
-        val SKIP_ROW = if (version == RegistryVersionEnum.V1) 11 else 16
+        val SKIP_ROW = when (version) {
+            RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 11
+            RegistryVersionEnum.V2 -> 16
+        }
         val ID = 14
-        val DATE = if (version == RegistryVersionEnum.V1) 1 else 2
+        val DATE = when (version) {
+            RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 1
+            RegistryVersionEnum.V2 -> 2
+        }
         val PAYER = 4
         val SUM = 13
-        val PURPOSE = if (version == RegistryVersionEnum.V1) 20 else 19
-
+        val BIK_AND_NAME_NUM = 17
+        val PURPOSE =
+            when (version) {
+                RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 20
+                RegistryVersionEnum.V2 -> 19
+            }
         println("$i. Parse $version [$fileName]")
         val payments = mutableMapOf<String, Payment>()
 
@@ -50,13 +59,16 @@ class PaymentParser {
             val docNumber = row.getCell(ID).stringCellValue.trim()
             val date = when (version) {
                 RegistryVersionEnum.V1 -> row.getCell(DATE).localDateTimeCellValue
-                RegistryVersionEnum.V2 -> LocalDate.parse(
+                RegistryVersionEnum.V2, RegistryVersionEnum.V3 -> LocalDate.parse(
                     row.getCell(DATE).stringCellValue.toString().trim(),
                     DateTimeFormatter.ofPattern("dd.MM.yyyy")
                 ).atStartOfDay()
-                RegistryVersionEnum.UNKNOWN -> LocalDateTime.now()
             }
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
+            val (bik, bankName) = when (version) {
+                RegistryVersionEnum.V1 -> bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+                RegistryVersionEnum.V2, RegistryVersionEnum.V3 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+            }
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
             if (exclude(purpose)) continue
 
@@ -75,4 +87,19 @@ class PaymentParser {
             || purpose.contains("Оплата по договору D210200334-21")
             || purpose.contains("Возврат денежных средств за заказ")
 
+    //БИК 042202603, ВОЛГО-ВЯТСКИЙ БАНК ПАО СБЕРБАНК Г. Нижний Новгород
+    private fun bikAndNameParser(bikAndName: String): Pair<String, String> {
+        val split = bikAndName.split(",")
+        val bik = split[0].substring(4)
+        val name = split[1].substring(1)
+        return Pair(bik, name)
+    }
+
+    //БИК 044525232 ПАО "МТС-Банк", г.Москва
+    fun bikAndNameParserV2orV3(bikAndName: String): Pair<String, String?> {
+        val split = bikAndName.split(" ", limit = 3)
+        val bik = split[1]
+        val name = if (split.size > 2) split[2] else null
+        return Pair(bik, name)
+    }
 }

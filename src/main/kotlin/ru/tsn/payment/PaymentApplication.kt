@@ -66,6 +66,7 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2024.01.10-2024.01.22 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.01.22-2024.02.02 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.02.02-2024.02.26 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.02.26-2024.03.20 счёт 40703810338000004376.xlsx",
     )
 
     private fun getVersion(fileName: String, sheetName: String): RegistryVersionEnum {
@@ -75,9 +76,12 @@ class PaymentApplication : CommandLineRunner {
         val sheet = workbook.getSheet(sheetName)
         val row = sheet.getRow(1)
         val version = row.getCell(5).stringCellValue
+
         if (version.startsWith("СберБизнес 41.")) return RegistryVersionEnum.V1
-        if (version.startsWith("СберБизнес. 03")) return RegistryVersionEnum.V2
-        return RegistryVersionEnum.UNKNOWN
+        if (version.startsWith("СберБизнес. 03.001.02-15")) return RegistryVersionEnum.V2
+        if (version.startsWith("СберБизнес. 03.001.02-18")) return RegistryVersionEnum.V3
+
+        throw IllegalArgumentException("Unknown version of excel document")
     }
 
     override fun run(vararg args: String?) {
@@ -167,6 +171,9 @@ class PaymentApplication : CommandLineRunner {
         account = findByHardCodeOrNull(accounts, payment)
         if (account != null) return Pair(account, SearchTypeEnum.HARD_CODE)
 
+        account = findByPurposeOrNull(accounts, payment)
+        if (account != null) return Pair(account, SearchTypeEnum.HARD_CODE)
+
         return Pair(null, null)
     }
 
@@ -202,6 +209,22 @@ class PaymentApplication : CommandLineRunner {
     fun squareMore20(sum: BigDecimal?): Boolean = sum?.compareTo(BigDecimal(20)) == 1
     fun less3000(sum: BigDecimal?): Boolean = sum?.compareTo(BigDecimal(3000)) == -1
     fun squareLess20(sum: BigDecimal?): Boolean = sum?.compareTo(BigDecimal(20)) == -1
+
+    fun findByPurposeOrNull(accounts: List<Account>, payment: Payment?): Account? {
+        if (payment?.purpose?.contains("Машиноместо №34", true) == true) {
+            return accounts.find { it.number.contains("3034") }
+        }
+        if (payment?.purpose?.contains("Машиноместо №35", true) == true) {
+            return accounts.find { it.number.contains("3035") }
+        }
+        if (payment?.purpose?.contains("Машиноместо №67", true) == true) {
+            return accounts.find { it.number.contains("3067") }
+        }
+        if (payment?.purpose?.contains("Машиноместо №68", true) == true) {
+            return accounts.find { it.number.contains("3068") }
+        }
+        return null
+    }
 
     fun findByHardCodeOrNull(accounts: List<Account>, payment: Payment?): Account? {
         if (payment?.payer?.contains("ВИЖИЦКИЙ ВАЛЕРИЙ АЛЕКСЕЕВИЧ", true) == true) {
