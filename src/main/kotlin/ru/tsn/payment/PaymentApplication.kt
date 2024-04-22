@@ -67,6 +67,7 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2024.01.22-2024.02.02 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.02.02-2024.02.26 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.02.26-2024.03.20 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.03.20-2024.04.19 счёт 40703810338000004376.xlsx",
     )
 
     private fun getVersion(fileName: String, sheetName: String): RegistryVersionEnum {
@@ -80,6 +81,7 @@ class PaymentApplication : CommandLineRunner {
         if (version.startsWith("СберБизнес 41.")) return RegistryVersionEnum.V1
         if (version.startsWith("СберБизнес. 03.001.02-15")) return RegistryVersionEnum.V2
         if (version.startsWith("СберБизнес. 03.001.02-18")) return RegistryVersionEnum.V3
+        if (version.startsWith("СберБизнес. 03.001.02-20")) return RegistryVersionEnum.V4
 
         throw IllegalArgumentException("Unknown version of excel document")
     }

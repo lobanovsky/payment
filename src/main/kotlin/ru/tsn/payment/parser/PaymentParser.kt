@@ -2,6 +2,7 @@ package ru.tsn.payment.parser
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.tsn.payment.enums.RegistryVersionEnum
+import ru.tsn.payment.enums.RegistryVersionEnum.*
 import ru.tsn.payment.model.Payment
 import java.io.File
 import java.io.FileInputStream
@@ -19,21 +20,21 @@ class PaymentParser {
 
 
         val SKIP_ROW = when (version) {
-            RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 11
-            RegistryVersionEnum.V2 -> 16
+            V1, V3, V4  -> 11
+            V2 -> 16
         }
         val ID = 14
         val DATE = when (version) {
-            RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 1
-            RegistryVersionEnum.V2 -> 2
+            V1, V3, V4 -> 1
+            V2 -> 2
         }
         val PAYER = 4
         val SUM = 13
         val BIK_AND_NAME_NUM = 17
         val PURPOSE =
             when (version) {
-                RegistryVersionEnum.V1, RegistryVersionEnum.V3 -> 20
-                RegistryVersionEnum.V2 -> 19
+                V1, V3, V4 -> 20
+                V2 -> 19
             }
         println("$i. Parse $version [$fileName]")
         val payments = mutableMapOf<String, Payment>()
@@ -58,16 +59,16 @@ class PaymentParser {
             if (payer.isBlank()) continue
             val docNumber = row.getCell(ID).stringCellValue.trim()
             val date = when (version) {
-                RegistryVersionEnum.V1 -> row.getCell(DATE).localDateTimeCellValue
-                RegistryVersionEnum.V2, RegistryVersionEnum.V3 -> LocalDate.parse(
+                V1, V4 -> row.getCell(DATE).localDateTimeCellValue
+                V2, V3 -> LocalDate.parse(
                     row.getCell(DATE).stringCellValue.toString().trim(),
                     DateTimeFormatter.ofPattern("dd.MM.yyyy")
                 ).atStartOfDay()
             }
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
             val (bik, bankName) = when (version) {
-                RegistryVersionEnum.V1 -> bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
-                RegistryVersionEnum.V2, RegistryVersionEnum.V3 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+                V1 -> bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+                V2, V3, V4 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
             }
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
             if (exclude(purpose)) continue
