@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import ru.tsn.payment.enums.RegistryVersionEnum
+import ru.tsn.payment.enums.RegistryVersionEnum.*
 import ru.tsn.payment.enums.SearchTypeEnum
 import ru.tsn.payment.model.Account
 import ru.tsn.payment.model.Payment
@@ -70,6 +71,7 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2024.03.20-2024.04.19 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.04.19-2024.04.22 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.04.22-2024.04.23 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.04.23-2024.05.01 счёт 40703810338000004376.xlsx"
     )
 
     private fun getVersion(fileName: String, sheetName: String): RegistryVersionEnum {
@@ -80,10 +82,11 @@ class PaymentApplication : CommandLineRunner {
         val row = sheet.getRow(1)
         val version = row.getCell(5).stringCellValue
 
-        if (version.startsWith("СберБизнес 41.")) return RegistryVersionEnum.V1
-        if (version.startsWith("СберБизнес. 03.001.02-15")) return RegistryVersionEnum.V2
-        if (version.startsWith("СберБизнес. 03.001.02-18")) return RegistryVersionEnum.V3
-        if (version.startsWith("СберБизнес. 03.001.02-20")) return RegistryVersionEnum.V4
+        if (version.startsWith("СберБизнес 41.")) return V1
+        if (version.startsWith("СберБизнес. 03.001.02-15")) return V2
+        if (version.startsWith("СберБизнес. 03.001.02-18")) return V3
+        if (version.startsWith("СберБизнес. 03.001.02-20")) return V4
+        if (version.startsWith("СберБизнес. 03.001.02-21")) return V5
 
         throw IllegalArgumentException("Unknown version of excel document")
     }
