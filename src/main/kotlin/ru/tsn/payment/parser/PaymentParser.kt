@@ -20,12 +20,12 @@ class PaymentParser {
 
 
         val SKIP_ROW = when (version) {
-            V1, V3, V4, V5  -> 11
+            V1, V3, V4, V5, V6  -> 11
             V2 -> 16
         }
         val ID = 14
         val DATE = when (version) {
-            V1, V3, V4, V5 -> 1
+            V1, V3, V4, V5, V6 -> 1
             V2 -> 2
         }
         val PAYER = 4
@@ -33,7 +33,7 @@ class PaymentParser {
         val BIK_AND_NAME_NUM = 17
         val PURPOSE =
             when (version) {
-                V1, V3, V4, V5 -> 20
+                V1, V3, V4, V5, V6 -> 20
                 V2 -> 19
             }
         println("$i. Parse $version [$fileName]")
@@ -59,7 +59,7 @@ class PaymentParser {
             if (payer.isBlank()) continue
             val docNumber = row.getCell(ID).stringCellValue.trim()
             val date = when (version) {
-                V1, V4, V5 -> row.getCell(DATE).localDateTimeCellValue
+                V1, V4, V5, V6 -> row.getCell(DATE).localDateTimeCellValue
                 V2, V3 -> LocalDate.parse(
                     row.getCell(DATE).stringCellValue.toString().trim(),
                     DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -68,7 +68,7 @@ class PaymentParser {
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
             val (bik, bankName) = when (version) {
                 V1 -> bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
-                V2, V3, V4, V5 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+                V2, V3, V4, V5, V6 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
             }
             val purpose = row.getCell(PURPOSE).stringCellValue.trim()
             if (exclude(purpose)) continue
