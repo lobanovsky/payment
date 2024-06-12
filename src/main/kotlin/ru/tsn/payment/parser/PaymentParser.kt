@@ -1,8 +1,8 @@
 package ru.tsn.payment.parser
 
+import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import ru.tsn.payment.enums.RegistryVersionEnum
-import ru.tsn.payment.enums.RegistryVersionEnum.*
 import ru.tsn.payment.model.Payment
 import java.io.File
 import java.io.FileInputStream
@@ -15,28 +15,9 @@ class PaymentParser {
     fun parse(
         i: Int, fileName: String,
         sheetName: String,
-        version: RegistryVersionEnum
     ): MutableMap<String, Payment> {
 
-
-        val SKIP_ROW = when (version) {
-            V1, V3, V4, V5, V6  -> 11
-            V2 -> 16
-        }
-        val ID = 14
-        val DATE = when (version) {
-            V1, V3, V4, V5, V6 -> 1
-            V2 -> 2
-        }
-        val PAYER = 4
-        val SUM = 13
-        val BIK_AND_NAME_NUM = 17
-        val PURPOSE =
-            when (version) {
-                V1, V3, V4, V5, V6 -> 20
-                V2 -> 19
-            }
-        println("$i. Parse $version [$fileName]")
+        println("$i. Parse [$fileName]")
         val payments = mutableMapOf<String, Payment>()
 
         val myFile = File(fileName)
@@ -44,9 +25,16 @@ class PaymentParser {
         val workbook = XSSFWorkbook(fis)
         val sheet = workbook.getSheet(sheetName)
 
+        val ID = 14
+        val PAYER = 4
+        val SUM = 13
+        val BIK_AND_NAME_NUM = 17
+        val findDate = findMarker("Дата проводки", sheet)
+        val findPurpose = findMarker("Назначение платежа", sheet)
+
         var skipCounter = 0
         for (row in sheet) {
-            if (skipCounter < SKIP_ROW) {
+            if (skipCounter < findDate.first) {
                 skipCounter++
                 continue
             }
@@ -58,19 +46,21 @@ class PaymentParser {
 
             if (payer.isBlank()) continue
             val docNumber = row.getCell(ID).stringCellValue.trim()
-            val date = when (version) {
-                V1, V4, V5, V6 -> row.getCell(DATE).localDateTimeCellValue
-                V2, V3 -> LocalDate.parse(
-                    row.getCell(DATE).stringCellValue.toString().trim(),
+            val cellType = row.getCell(findDate.second).cellType
+
+            val date = when (cellType) {
+                CellType.NUMERIC -> row.getCell(findDate.second).localDateTimeCellValue
+                CellType.STRING -> LocalDate.parse(
+                    row.getCell(findDate.second).stringCellValue.toString().trim(),
                     DateTimeFormatter.ofPattern("dd.MM.yyyy")
                 ).atStartOfDay()
+
+                else -> throw IllegalArgumentException("Unknown cell type")
             }
             val sum = BigDecimal.valueOf(row.getCell(SUM)?.numericCellValue ?: Double.NaN)
-            val (bik, bankName) = when (version) {
-                V1 -> bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
-                V2, V3, V4, V5, V6 -> bikAndNameParserV2orV3(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
-            }
-            val purpose = row.getCell(PURPOSE).stringCellValue.trim()
+            val (bik, bankName) = bikAndNameParser(row.getCell(BIK_AND_NAME_NUM).stringCellValue.trim())
+//            println("bik: $bik, bankName: $bankName")
+            val purpose = row.getCell(findPurpose.second).stringCellValue.trim()
             if (exclude(purpose)) continue
 
             val uuid = "$date $docNumber $sum";
@@ -88,19 +78,32 @@ class PaymentParser {
             || purpose.contains("Оплата по договору D210200334-21")
             || purpose.contains("Возврат денежных средств за заказ")
 
-    //БИК 042202603, ВОЛГО-ВЯТСКИЙ БАНК ПАО СБЕРБАНК Г. Нижний Новгород
+    //1) БИК 042202603, ВОЛГО-ВЯТСКИЙ БАНК ПАО СБЕРБАНК Г. Нижний Новгород
+    //2) БИК 044525232 ПАО "МТС-Банк", г.Москва
+    //1) bik = 042202603, bankName = ВОЛГО-ВЯТСКИЙ БАНК ПАО СБЕРБАНК Г. Нижний Новгород
+    //2) bik = 044525232, bankName = ПАО "МТС-Банк"
     private fun bikAndNameParser(bikAndName: String): Pair<String, String> {
-        val split = bikAndName.split(",")
-        val bik = split[0].substring(4)
-        val name = split[1].substring(1)
+        val split = bikAndName.split(" ")
+        val bik = split[1].replace(",", "").trim()
+        val name = split.subList(2, split.size).joinToString(" ")
         return Pair(bik, name)
     }
 
-    //БИК 044525232 ПАО "МТС-Банк", г.Москва
-    fun bikAndNameParserV2orV3(bikAndName: String): Pair<String, String?> {
-        val split = bikAndName.split(" ", limit = 3)
-        val bik = split[1]
-        val name = if (split.size > 2) split[2] else null
-        return Pair(bik, name)
+    private fun findMarker(marker: String, sheet: XSSFSheet): Pair<Int, Int> {
+        var i = 0;
+        var j = 0;
+        for (row in sheet) {
+            i++
+            for (cell in row) {
+                j++
+                if (cell.cellType != CellType.STRING) continue
+                if (cell.stringCellValue.isBlank()) continue
+                if (cell.stringCellValue.contains(marker)) {
+                    return Pair(i + 1, j - 1)
+                }
+            }
+            j = 0
+        }
+        throw IllegalArgumentException("Marker not found: $marker")
     }
 }

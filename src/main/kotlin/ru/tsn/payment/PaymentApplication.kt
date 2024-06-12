@@ -1,19 +1,14 @@
 package ru.tsn.payment
 
 import org.apache.commons.io.FilenameUtils
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import ru.tsn.payment.enums.RegistryVersionEnum
-import ru.tsn.payment.enums.RegistryVersionEnum.*
 import ru.tsn.payment.enums.SearchTypeEnum
 import ru.tsn.payment.model.Account
 import ru.tsn.payment.model.Payment
 import ru.tsn.payment.parser.AccountParser
 import ru.tsn.payment.parser.PaymentParser
-import java.io.File
-import java.io.FileInputStream
 import java.math.BigDecimal
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -42,26 +37,9 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2024.05.01-2024.05.06 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.05.06-2024.05.20 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.05.20-2024.05.27 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.05.27-2024.06.08 счёт 40703810338000004376.xlsx"
 
     )
-
-    private fun getVersion(fileName: String, sheetName: String): RegistryVersionEnum {
-        val myFile = File(fileName)
-        val fis = FileInputStream(myFile)
-        val workbook = XSSFWorkbook(fis)
-        val sheet = workbook.getSheet(sheetName)
-        val row = sheet.getRow(1)
-        val version = row.getCell(5).stringCellValue
-
-        if (version.startsWith("СберБизнес 41.")) return V1
-        if (version.startsWith("СберБизнес. 03.001.02-15")) return V2
-        if (version.startsWith("СберБизнес. 03.001.02-18")) return V3
-        if (version.startsWith("СберБизнес. 03.001.02-20")) return V4
-        if (version.startsWith("СберБизнес. 03.001.02-21")) return V5
-        if (version.startsWith("СберБизнес. 03.001.02-22")) return V6
-
-        throw IllegalArgumentException("Unknown version of excel document")
-    }
 
     override fun run(vararg args: String?) {
         val ids = mutableSetOf<String>()
@@ -70,8 +48,7 @@ class PaymentApplication : CommandLineRunner {
         for (file in PAYMENTS) {
             val sheetName = file.substringAfterLast(" ").split(".")[0]
             val fileName = Paths.get(DEFAULT_FOLDER).resolve(file).toString()
-            val version = getVersion(fileName, sheetName)
-            val payments = PaymentParser().parse(i, fileName, sheetName, version)
+            val payments = PaymentParser().parse(i, fileName, sheetName)
 
             val duplicates = findDuplicates(payments.keys, ids)
             println("Duplicates [${duplicates.size}] $duplicates")
