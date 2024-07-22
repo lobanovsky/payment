@@ -63,7 +63,7 @@ class PaymentParser {
             val purpose = row.getCell(findPurpose.second).stringCellValue.trim()
             if (exclude(purpose)) continue
 
-            val uuid = "$date $docNumber $sum";
+            val uuid = "${date.toLocalDate()} $docNumber $sum";
 
             payments[uuid] = Payment(uuid, date, payer, sum, docNumber, purpose)
         }
