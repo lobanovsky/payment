@@ -21,6 +21,8 @@ import kotlin.io.path.writeLines
 class PaymentApplication : CommandLineRunner {
 
     private val DEFAULT_FOLDER = "etc"
+    private val csv_directory = "csv"
+
 //    private val FILE_NAME = "СберБизнес. Выписка за 2021.06.04-20f21.06.17 счёт 40703810838000014811.xlsx"
 //    private val FILE_NAME = "СберБизнес. Выписка за 2021.06.18-2021.06.26 счёт 40703810838000014811.xlsx"
 
@@ -45,7 +47,8 @@ class PaymentApplication : CommandLineRunner {
         "СберБизнес. Выписка за 2024.07.22-2024.07.30 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.07.30-2024.08.07 счёт 40703810338000004376.xlsx",
         "СберБизнес. Выписка за 2024.08.07-2024.08.18 счёт 40703810338000004376.xlsx",
-        "СберБизнес. Выписка за 2024.08.18-2024.08.26 счёт 40703810338000004376.xlsx"
+        "СберБизнес. Выписка за 2024.08.18-2024.08.26 счёт 40703810338000004376.xlsx",
+        "СберБизнес. Выписка за 2024.08.26-2024.09.22 счёт 40703810338000004376.xlsx",
     )
 
     override fun run(vararg args: String?) {
@@ -73,7 +76,7 @@ class PaymentApplication : CommandLineRunner {
 
 //            println(lines)
             println()
-            Path(Paths.get(DEFAULT_FOLDER).resolve(fileName(file)).toString()).writeLines(lines);
+            Path(Paths.get(csv_directory).resolve(fileName(file)).toString()).writeLines(lines);
             i++
         }
     }
