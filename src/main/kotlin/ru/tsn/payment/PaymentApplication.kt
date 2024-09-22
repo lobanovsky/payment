@@ -11,7 +11,6 @@ import ru.tsn.payment.parser.AccountParser
 import ru.tsn.payment.parser.PaymentParser
 import java.math.BigDecimal
 import java.nio.file.Paths
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
@@ -88,8 +87,7 @@ class PaymentApplication : CommandLineRunner {
     private fun fileName(prefix: String): String {
         val baseName = FilenameUtils.getBaseName(prefix)
         val formatterFileName = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dateFormat = LocalDateTime.now().format(formatterFileName)
-        return "$baseName"
+        return "$baseName.csv"
     }
 
 
