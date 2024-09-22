@@ -89,7 +89,7 @@ class PaymentApplication : CommandLineRunner {
         val baseName = FilenameUtils.getBaseName(prefix)
         val formatterFileName = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dateFormat = LocalDateTime.now().format(formatterFileName)
-        return "$baseName [2021-12-05].csv"
+        return "$baseName"
     }
 
 
