@@ -71,10 +71,10 @@ class PaymentParser {
     }
 
     private fun exclude(purpose: String): Boolean = purpose.contains("ПО ПРИНЯТЫМ ПЛАТЕЖАМ")
-            || purpose.contains("ПО ПЛАТЕЖАМ С")
+            || purpose.contains("ПО ПЛАТЕЖАМ С", ignoreCase = true)
             || purpose.contains("Возврат депозита по договору")
             || purpose.contains("Выплата %% по договору")
-            || purpose.contains("ПЕРЕВОД СРЕДСТВ ПО ПОРУЧЕНИЮ ФИЗ.ЛИЦ ЗА")
+            || purpose.contains("ПЕРЕВОД СРЕДСТВ ПО ПОРУЧЕНИЮ ФИЗ.ЛИЦ ЗА", ignoreCase = true)
             || purpose.contains("Оплата по договору D210200334-21")
             || purpose.contains("Возврат денежных средств за заказ")
 
