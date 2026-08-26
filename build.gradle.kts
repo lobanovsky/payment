@@ -26,6 +26,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation("org.apache.poi:poi-ooxml:5.0.0")
+    testImplementation(kotlin("test"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
